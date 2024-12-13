@@ -1,43 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reels Maker</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="upload.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Loading Spinner Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 5em;
+            box-shadow: #57575723 2px 2px 10px 5px;
+        }
+         nav li{
+            list-style-type: none;
+            color:rgb(22, 11, 165) ;
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+         }
+         nav li a:hover{
+            list-style-type: square;
+            color:rgb(238, 14, 14) ;
+         }
+        nav a {
+            color: rgb(19, 38, 150);
+            text-decoration: none;
+            padding: 10px;
+        }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        .active {
+            font-weight: bold;
+        }
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #resetButton {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-wrapper img {
+            width: 200px; /* Adjust width as necessary */
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .image-wrapper.selected img {
+            border: 2px solid #3498db; /* Highlight selected images */
+        }
+        .container-fluid{
+            width: 100%;
+            height: 80vh;
+            /* background: #b0b0b0; */
+            text-align: center;
+            justify-content: center;
+            
+        }
+form input{
+    padding: 20px 20px 20px 20px;
+    margin: 20px 20px 20px 20px;
+}
+.box button{
+margin: 10px 10px;
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul class="d-flex ">
+            <li class="text-center mt-2"><a href="index.html">Home</a></li>
+            <li class="text-center mt-2"><a href="upload.html">Upload Images</a></li>
+        </ul>
+    </nav>
+    <div class="container-fluid mt-5">
+    <h1>Reels Maker</h1>
+    <p>Welcome to Reels Maker! Go to "Create Video" to upload images and make a video.</p>
+
+    <form id="imageForm">
+        <input type="text" id="query" placeholder="Search query" required>
+        <input type="number" id="duration" placeholder="Duration (seconds)" required>
+        <input type="text" id="textInput" placeholder="Enter text for voiceover" required>
+        <button class="btn btn-primary"  type="submit">Submit</button>
+        <div class="box d-flex flex-row ">
+        <button class="btn btn-success" id="generateVideoButton" style="display: none;">Generate Video</button>
+        <button class="btn btn-danger" id="resetButton">Reset</button>
+    </div>
+    </form>
+    <div id="imageContainer" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+    <div id="downloadSection"></div>
+
+
+    <div id="loading" class="bg-dark w-100 h-100 bg-opacity-50">
+        <div class="spinner"></div>
+        <p>Creating video, please wait...</p>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
 </html>
