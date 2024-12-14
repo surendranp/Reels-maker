@@ -4,7 +4,7 @@ import axios from 'axios';
 
 function Timeline() {
     const [text, setText] = useState("");
-    const [images, setImages] = useState([]);
+    // const [images, setImages] = useState([]);
     const [videoPath, setVideoPath] = useState(null);
 
     const handleGenerate = async () => {
