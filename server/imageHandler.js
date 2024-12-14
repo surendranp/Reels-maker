@@ -27,3 +27,4 @@ const registerImageRoutes = (app) => {
 };
 
 module.exports = { registerImageRoutes };
+ 
