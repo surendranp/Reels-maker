@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-console.log(`Using PORT: ${PORT}`);
+
 // Global error handling
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
@@ -69,6 +69,32 @@ app.get('/search-images', async (req, res) => {
   }
 });
 
+// Function to fetch images from Unsplash
+async function fetchImagesFromUnsplash(query) {
+  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+  if (!accessKey) {
+    throw new Error('Unsplash access key is not defined.');
+  }
+
+  try {
+    const response = await axios.get(`https://api.unsplash.com/search/photos`, {
+      params: {
+        query: query,
+        client_id: accessKey,
+        per_page: 5 // You can adjust the number of images returned
+      }
+    });
+
+    return response.data.results.map(image => ({
+      url: image.urls.small,
+      alt_description: image.alt_description
+    }));
+  } catch (error) {
+    console.error('Error fetching images from Unsplash:', error.message);
+    throw new Error('Error fetching images from Unsplash');
+  }
+}
+
 // Route to generate audio from text
 app.post('/generate-audio', async (req, res) => {
   const { text } = req.body;
@@ -86,6 +112,37 @@ app.post('/generate-audio', async (req, res) => {
   }
 });
 
+// Function to generate audio using Eleven Labs API
+async function generateAudio(text) {
+  const outputDir = path.join(__dirname, 'output');
+  const audioPath = path.join(outputDir, 'output_audio.mp3');
+
+  // Ensure the output directory exists
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+    console.log('Output directory created:', outputDir);
+  }
+
+  try {
+    const response = await axios.post('https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4', {
+      text: text
+    }, {
+      headers: {
+        'xi-api-key': process.env.ELEVEN_LABS_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      responseType: 'arraybuffer'
+    });
+
+    fs.writeFileSync(audioPath, response.data); // Save the audio to the output directory
+    console.log('Audio file generated and saved at:', audioPath);
+    return audioPath;
+  } catch (error) {
+    console.error('Error generating audio:', error.message);
+    throw new Error('Failed to generate audio');
+  }
+}
+
 // Route to create video from images and audio
 app.post('/create-video', async (req, res) => {
   const { images, durationPerImage, audioPath } = req.body;
@@ -102,43 +159,6 @@ app.post('/create-video', async (req, res) => {
     res.status(500).json({ message: 'Error creating video.' });
   }
 });
-
-// Function to fetch images from Unsplash
-async function fetchImagesFromUnsplash(query) {
-  const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&client_id=${process.env.UNSPLASH_ACCESS_KEY}`;
-  try {
-    const response = await axios.get(url);
-    const results = response.data.results;
-    return results.map(image => ({
-      url: image.urls ? image.urls.regular : null,
-    })).filter(image => image.url !== null);
-  } catch (error) {
-    console.error('Error fetching images from Unsplash:', error.message);
-    throw new Error('Error fetching images from Unsplash');
-  }
-}
-
-// Function to generate audio using Eleven Labs API
-async function generateAudio(text) {
-  const audioPath = path.join(__dirname, 'output', 'output_audio.mp3');
-  try {
-    const response = await axios.post('https://api.elevenlabs.io/v1/text-to-speech/pqHfZKP75CvOlQylNhV4', {
-      text: text
-    }, {
-      headers: {
-        'xi-api-key': process.env.ELEVEN_LABS_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      responseType: 'arraybuffer'
-    });
-
-    fs.writeFileSync(audioPath, response.data);
-    return audioPath;
-  } catch (error) {
-    console.error('Error generating audio:', error.message);
-    throw new Error('Failed to generate audio');
-  }
-}
 
 // Function to create video using FFmpeg
 async function createVideo(images, durationPerImage, audioPath) {
@@ -204,12 +224,12 @@ app.delete('/reset', async (req, res) => {
   try {
     await deleteFiles(tempDir);
     await deleteFiles(outputDir);
-    res.json({ message: 'Files deleted successfully.' });
-  } catch (error) {
-    console.error('Error deleting files:', error.message);
+    res.status(200).json({ message: 'Files deleted successfully.' });
+  } catch (err) {
     res.status(500).json({ message: 'Error deleting files.' });
   }
 });
+
 // Cleanup temporary files logic
 const tempDir = path.join(__dirname, 'uploads');
 const outputDir = path.join(__dirname, 'output');
