@@ -103,17 +103,3 @@ resetButton.addEventListener('click', async () => {
         }
     }
 });
-
-// Reset files on server
-resetButton.addEventListener('click', async () => {
-    if (confirm('Are you sure you want to reset all files?')) {
-        try {
-            await fetch('/reset', { method: 'DELETE' });
-            alert('Files reset successfully.');
-            location.reload();
-        } catch (error) {
-            console.error('Error resetting files:', error);
-            alert('Error resetting files.');
-        }
-    }
-});

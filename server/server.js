@@ -187,7 +187,11 @@ async function createVideo(images, durationPerImage, audioPath) {
   }));
 
   return new Promise((resolve, reject) => {
-    const ffmpegCommand = `ffmpeg -framerate 1/${durationPerImage} -i ${tempDir}/image%d.jpg -i ${audioPath} -c:v libx264 -r 30 -pix_fmt yuv420p -c:a aac -b:a 192k -shortest ${videoOutputPath}`;
+    const ffmpegCommand = `
+  ffmpeg -framerate 1/1 -i ${inputImagesPath} -i ${inputAudioPath} \
+  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -c:v libx264 -r 30 -pix_fmt yuv420p \
+  -c:a aac -b:a 192k -shortest ${outputVideoPath}
+`;
 
     console.log('Running FFmpeg command:', ffmpegCommand);
 
