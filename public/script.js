@@ -60,31 +60,35 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
             // Keep the loader visible during video creation process
             loading.style.display = 'block';
             console.log('Loading spinner visible during video generation process');
-
+        
             const selectedImages = [...document.querySelectorAll('.image-wrapper.selected img')].map(img => img.src);
-
+        
+            console.log('Selected Images:', selectedImages); // Log selected images
+        
             if (selectedImages.length === 0) {
                 alert('Please select at least one image to create a video.');
                 return;
             }
-
+        
             try {
-                // Generate audio first
+                console.log('Generating audio...');
                 const audioResponse = await fetch(`${baseUrl}/generate-audio`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: textInput })
                 });
-
+        
                 if (!audioResponse.ok) {
                     alert('Error generating audio.');
                     return;
                 }
-
+        
                 const audioData = await audioResponse.json();
                 const audioPath = audioData.audioPath;
-
+                console.log('Generated audio path:', audioPath); // Log audio path
+        
                 // Now create the video with selected images and generated audio
+                console.log('Creating video...');
                 const videoResponse = await fetch(`${baseUrl}/create-video`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -94,16 +98,18 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
                         audioPath
                     })
                 });
-
+        
                 if (!videoResponse.ok) {
                     alert('Error creating video.');
                     return;
                 }
-
+        
                 const videoData = await videoResponse.json();
                 const videoPath = videoData.videoPath;
                 const videoUrl = `${baseUrl}${videoPath}`;
-
+        
+                console.log('Video path:', videoPath); // Log video path
+        
                 // Update the UI with a download link and embedded video player
                 downloadSection.innerHTML = `
                     <a href="${videoUrl}" download="output_video.mp4">Download Video</a>
@@ -122,6 +128,7 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
                 loading.style.display = 'none';
             }
         };
+        
     } catch (error) {
         console.error('Error:', error.message);
         alert('An error occurred, please try again.');
