@@ -81,7 +81,7 @@ async function fetchImagesFromUnsplash(query) {
       params: {
         query: query,
         client_id: accessKey,
-        per_page: 5 // You can adjust the number of images returned
+        per_page: 20 // You can adjust the number of images returned
       }
     });
 
