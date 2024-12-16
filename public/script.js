@@ -30,7 +30,10 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
     imageContainer.innerHTML = '';
 
     try {
-        const response = await fetch(`http://localhost:5000/search-images?q=${encodeURIComponent(query)}`);
+        // Use dynamic base URL
+        const baseUrl = window.location.origin;
+
+        const response = await fetch(`${baseUrl}/search-images?q=${encodeURIComponent(query)}`);
         if (!response.ok) throw new Error('Error fetching images.');
 
         const images = await response.json();
@@ -67,7 +70,7 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
 
             try {
                 // Generate audio first
-                const audioResponse = await fetch('http://localhost:5000/generate-audio', {
+                const audioResponse = await fetch(`${baseUrl}/generate-audio`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: textInput })
@@ -82,7 +85,7 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
                 const audioPath = audioData.audioPath;
 
                 // Now create the video with selected images and generated audio
-                const videoResponse = await fetch('http://localhost:5000/create-video', {
+                const videoResponse = await fetch(`${baseUrl}/create-video`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -99,7 +102,7 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
 
                 const videoData = await videoResponse.json();
                 const videoPath = videoData.videoPath;
-                const videoUrl = `http://localhost:5000${videoPath}`;
+                const videoUrl = `${baseUrl}${videoPath}`;
 
                 // Update the UI with a download link and embedded video player
                 downloadSection.innerHTML = `
@@ -132,7 +135,9 @@ document.getElementById('imageForm').addEventListener('submit', async (event) =>
 // Reset functionality to clear all uploaded files, video, and input fields
 document.getElementById('resetButton').addEventListener('click', async () => {
     try {
-        const response = await fetch('http://localhost:5000/reset', {
+        const baseUrl = window.location.origin;
+
+        const response = await fetch(`${baseUrl}/reset`, {
             method: 'DELETE'
         });
 
