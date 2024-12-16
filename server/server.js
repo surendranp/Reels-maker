@@ -9,7 +9,7 @@ const multer = require('multer'); // Add multer for file uploads
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 
 // Global error handling
 process.on('uncaughtException', (err) => {
