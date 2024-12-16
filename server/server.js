@@ -210,7 +210,22 @@ app.delete('/reset', async (req, res) => {
     res.status(500).json({ message: 'Error deleting files.' });
   }
 });
+// Cleanup temporary files logic
+const tempDir = path.join(__dirname, 'uploads');
+const outputDir = path.join(__dirname, 'output');
 
+function cleanupFiles() {
+  try {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    fs.rmSync(outputDir, { recursive: true, force: true });
+    console.log('Temporary files cleaned up');
+  } catch (error) {
+    console.error('Error cleaning up files:', error.message);
+  }
+}
+
+// Schedule cleanup every 1 hour
+setInterval(cleanupFiles, 60 * 60 * 1000);
 // Ensure app uses dynamic port for deployment on platforms like Railway
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
