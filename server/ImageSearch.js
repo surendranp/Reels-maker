@@ -42,7 +42,7 @@ const ImageSearch = ({ onSelect }) => {
                         src={image.urls.small}
                         alt={image.description || 'Image'}
                         onClick={() => handleImageSelect(image.urls.small)} // Select the image on click
-                        style={{ cursor: 'pointer', margin: '10px', width: '500px' }} // Style the images
+                        style={{ cursor: 'pointer', margin: '10px', width: '100px' }} // Style the images
                     />
                 ))}
             </div>
