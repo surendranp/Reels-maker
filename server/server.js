@@ -81,7 +81,7 @@ async function fetchImagesFromUnsplash(query) {
       params: {
         query: query,
         client_id: accessKey,
-        per_page: 20 // You can adjust the number of images returned
+        per_page:50 // You can adjust the number of images returned
       }
     });
 
@@ -245,7 +245,7 @@ function cleanupFiles() {
 }
 
 // Schedule cleanup every 1 hour
-setInterval(cleanupFiles, 10000 * 1000);
+setInterval(cleanupFiles, 120 * 1000);
 // Ensure app uses dynamic port for deployment on platforms like Railway
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
