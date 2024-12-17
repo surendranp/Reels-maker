@@ -245,7 +245,7 @@ function cleanupFiles() {
 }
 
 // Schedule cleanup every 1 hour
-setInterval(cleanupFiles, 40 * 1000);
+setInterval(cleanupFiles, 10000 * 1000);
 // Ensure app uses dynamic port for deployment on platforms like Railway
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
